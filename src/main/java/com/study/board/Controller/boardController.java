@@ -5,10 +5,7 @@ import com.study.board.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class boardController {
@@ -23,7 +20,7 @@ public class boardController {
 
     @PostMapping("/board/writepro")
     public String boardWritePro(Board board){
-        boardService.wirte(board);
+        boardService.write(board);
 
         return "";
     }
@@ -38,5 +35,30 @@ public class boardController {
     public String boardview(Model model, Integer id){
         model.addAttribute("board", boardService.boardview(id));
         return "boardview";
+    }
+
+    @GetMapping("/board/delete")
+    public String boardDelete(Integer id){
+
+        boardService.boardDelete(id);
+
+        return "redirect:/board/list";
+    }
+
+    @GetMapping("/board/modify/{id}")
+    public String boardModify(@PathVariable("id") Integer id, Model model){
+
+        model.addAttribute("board",boardService.boardview(id));
+        return "boardmodify";
+    }
+
+    @PostMapping("/board/update/{id}")
+    public String boardUpdate(@PathVariable("id") Integer id, Board board){
+        Board boardTemp = boardService.boardview(id);
+        boardTemp.setTitle(board.getTitle());
+        boardTemp.setContent(board.getContent());
+
+        boardService.write(boardTemp);
+        return "redirect:/board/list";
     }
 }
